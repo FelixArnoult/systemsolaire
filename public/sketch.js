@@ -11,7 +11,7 @@ var studiedSystem;
 var orbiter = []
 var vitesseTemps = 1;
 var sliderTemps;
-var img;
+var loopState=true;
 function setup() {
   // const sunCarac = [285.1 * scaleFactor / 10, 0, 1, color(240, 195, 0)]; radius, avg. dist from sun, periode de revolution, color
   // const mercury = [1 * scaleFactor, 45.49, 0.241, color(110, 11, 20)]; xpos, radius, avg. dist from sun
@@ -27,62 +27,72 @@ function setup() {
     285.1 * scaleFactor / 20,
     0,
     1,
-    color(240, 195, 0)
+    color(240, 195, 0),
+    "./images/sun.png"
   ]; //radius, avg. dist from sun, periode de revolution, color
   const mercury = [
     1 * scaleFactor,
     distFactor * pow(log(45.49), 2),
     0.241,
-    color(110, 11, 20)
+    color(110, 11, 20),
+    "./images/mercure.png"
   ]; //radius, avg. dist from sun
   const venus = [
     2.4806 * scaleFactor,
     distFactor * pow(log(71.85), 2),
     0.615,
-    color(211, 113, 0)
+    color(211, 113, 0),
+    "./images/venus.png"
   ]; //radius, avg. dist from sun
   const earth = [
     2.6099 * scaleFactor,
     distFactor * pow(log(101.6), 2),
     1,
-    color(127, 208, 255)
+    color(127, 208, 255),
+    "./images/earth.png"
   ]; //radius, avg. dist from sun
   const mars = [
     1.388 * scaleFactor,
     distFactor * pow(log(150.4), 2),
     1.881,
-    color(231, 133, 0)
+    color(231, 133, 0),
+    "./images/mars.png"
   ]; //radius, avg. dist from sun
   const jupiter = [
     28.353 * scaleFactor,
     distFactor * pow(log(512.2), 2),
     11.862,
-    color(188, 136, 84)
+    color(188, 136, 84),
+    "./images/jupiter.png"
   ]; //radius, avg. dist from sun
   const saturn = [
     23.393 * scaleFactor,
     distFactor * pow(log(985.2), 2),
     29.452,
-    color(214, 163, 61)
+    color(214, 163, 61),
+    "./images/saturn.png"
   ]; //radius, avg. dist from sun
   const uranus = [
     10.356 * scaleFactor,
     distFactor * pow(log(2007), 2),
     84.323,
-    color(127, 208, 255)
+    color(127, 208, 255),
+    "./images/uranus.png"
   ]; //radius, avg. dist from sun
   const neptune = [
     10.094 * scaleFactor,
     distFactor * pow(log(3004), 2),
     164.882,
-    color(100, 100, 255)
+    color(100, 100, 255),
+    "./images/neptune.png"
   ]; //radius, avg. dist from sun
 
   const moon = [
     1.5 * scaleFactor,
     distFactor * pow(log(80), 2),
     0.02,
-    color(255, 208, 255)
+    color(255, 208, 255),
+    "./images/moon.png"
   ]
 
   const solarSystem = {
@@ -119,7 +129,6 @@ function setup() {
   sliderTemps = createSlider(0, 1, 1, 0.02);
   sliderTemps.position(10, 10);
   sliderTemps.style('width', '80px');
-  img = loadImage("images/terre.png");
 }
 
 function draw() {
@@ -137,11 +146,26 @@ function mouseClicked() {
   })
 }
 
+function keyPressed() {
+  if (keyCode === 32) {
+  console.log(keyCode);
+    if (!loopState) {
+      noLoop();
+      loopState = !loopState
+    }
+    else {
+      loop();
+      loopState = !loopState
+    }
+  }
+}
+
 function Astre(arrayCarac, systemAssocie) {
   this.diametre = arrayCarac[0];
   this.distanceParent = arrayCarac[1];
   this.revolution = arrayCarac[2];
   this.couleur = arrayCarac[3];
+  this.photo = loadImage(arrayCarac[4]);
   this.systemAssocie = systemAssocie;
   this.child = [];
 
@@ -174,9 +198,9 @@ function Astre(arrayCarac, systemAssocie) {
     if (this.isOn()) {
       strokeWeight(3);
       stroke(255);
-      // ellipse(this.posX, this.posY, this.diametre, this.diametre);
+      ellipse(this.posX, this.posY, this.diametre + 2, this.diametre + 2);
     }
-    image(img, this.posX, this.posY, this.diametre, this.diametre);
+    image(this.photo, this.posX, this.posY, this.diametre, this.diametre);
     this.drawChild();
   }
 
