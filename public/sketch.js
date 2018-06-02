@@ -11,7 +11,7 @@ var studiedSystem;
 var orbiter = []
 var vitesseTemps = 1;
 var sliderTemps;
-var loopState=true;
+var loopState = true;
 function setup() {
   // const sunCarac = [285.1 * scaleFactor / 10, 0, 1, color(240, 195, 0)]; radius, avg. dist from sun, periode de revolution, color
   // const mercury = [1 * scaleFactor, 45.49, 0.241, color(110, 11, 20)]; xpos, radius, avg. dist from sun
@@ -113,6 +113,16 @@ function setup() {
     centre: earth,
     child: [moon]
   }
+  var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var myObj = JSON.parse(this.responseText);
+        // document.getElementById("demo").innerHTML = myObj.name;
+console.log(myObj);
+    }
+};
+xmlhttp.open("GET", "/planet/mercure", true);
+xmlhttp.send();
 
   studiedSystem = solarSystem;
   createCanvas(windowWidth, windowHeight);
@@ -148,12 +158,11 @@ function mouseClicked() {
 
 function keyPressed() {
   if (keyCode === 32) {
-  console.log(keyCode);
+    console.log(keyCode);
     if (!loopState) {
       noLoop();
       loopState = !loopState
-    }
-    else {
+    } else {
       loop();
       loopState = !loopState
     }

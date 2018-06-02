@@ -7,6 +7,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var json = require('./public/planets.json')
+
 var app = express();
 
 // view engine setup
@@ -22,12 +24,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
-app.get('/planet/:id',function(req, res){
-return res.json(__dirname + '/public/planets.json')
+app.get('/planete/:id', function(req, res) {
+  return res.json(transformJson(req.params.id))
 })
-
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,3 +51,13 @@ app.listen(8080, function() {
 })
 
 module.exports = app;
+
+function transformJson(id) {
+  var tmp = null;
+  json.map((elm) => {
+    if (elm['fields']['empty'] === id.toUpperCase()) {
+      tmp = elm
+    }
+  })
+  return tmp;
+}
