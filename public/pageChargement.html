@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<HTML><HEAD>
+     <style>
+     #container {
+          width: 640px; height: 480px;
+          margin: 20px auto;
+          border: 1px solid black;
+          overflow: hidden;
+          }
+     #myImg {
+          margin-left: -640px;
+          opacity: 0;
+          transition: margin-left 2s, opacity 40s;
+          }
+     </style>
+     <script type="text/javascript">
+     function slide() {
+          myImg.style.marginLeft = "0px" ;
+          myImg.style.opacity = 1 ;
+          }
+     </script>
+</HEAD><BODY onload="slide()">
+     <div id="container" onclick="slide()">
+          <img id="myImg" src="http://www.igihe.bi/IMG/jpg/rhinoceros.jpg">
+     </div>
+</BODY></HTML>
