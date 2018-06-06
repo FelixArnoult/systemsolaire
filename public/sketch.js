@@ -1,4 +1,5 @@
 const scaleFactor = 3;
+const tailleMercure = 4878;
 const distFactor = 12;
 //
 // voyager1 = [0, 1, 12570];
@@ -24,7 +25,7 @@ const earthSystem = {
   child: ["lune"]
 }
 
-let ready=false;
+let ready = false;
 let mainStar;
 let studiedSystem;
 let orbiter = []
@@ -36,7 +37,6 @@ let tempsComptr;
 
 function preload() {
   initStudiedSystem(solarSystem);
-
 }
 
 function setup() {
@@ -55,25 +55,23 @@ function setup() {
 function draw() {
   background(20, 20, 20);
   vitesseTemps = sliderTemps.value();
-  // try {
   mainStar.draw();
-  // } catch (e) {}
 }
 
 function incrementTime() {
   temps++;
-  // console.log(temps);
 }
 
 
 function initStudiedSystem(obj) {
   var request = new XMLHttpRequest();
-  request.open('GET', '/planete/' + obj["centre"], false);  // `false` makes the request synchronous
+  request.open('GET', '/planete/' + obj["centre"], false); // `false` makes the request synchronous
   request.send(null);
 
   if (request.status === 200) {
     let jsonarr = JSON.parse(request.responseText);
-        mainStar = new Astre(jsonarr['fields'], null);
+    mainStar = new Astre(jsonarr['fields'], null);
+    mainStar.loadPhoto();
   }
 
   obj['child'].map((item) => {
@@ -81,7 +79,7 @@ function initStudiedSystem(obj) {
       response.json().then(function(data) {
         let child = new Astre(data['fields'], null)
         mainStar.appendChild(child);
-        child.loadImage();
+        child.loadPhoto();
       })
     })
   })
@@ -111,21 +109,17 @@ function keyPressed() {
 }
 
 function Astre(properties, systemAssocie) {
-  this.diametre = properties['diametre_a_l_equateur_km'];
-  console.log(this.diametre);
+  this.diametre = properties['diametre_a_l_equateur_km'] / tailleMercure * scaleFactor;
   this.distanceParent = properties['distance_moyenne_du_soleil_ua'];
+  console.log("distance parent "+this.distanceParent);
   this.revolution = properties['periode_de_revolution_an'];
   this.nom = properties['empty'];
-
-  // this.couleur = arrayCarac[3];
-
-  // this.systemAssocie = systemAssocie;
   this.child = [];
-
+  this.photo;
   this.posX;
   this.poxY;
 
-  this.loadImage = function() {
+  this.loadPhoto = function() {
     this.photo = loadImage('images/' + this.nom.toLowerCase() + '.png');
   }
 
@@ -139,8 +133,12 @@ function Astre(properties, systemAssocie) {
   }
 
   this.draw = function() {
+    if (this.photo === 'undefined') {
+      return 0;
+    }
+
     strokeWeight(0);
-    // fill(this.couleur);
+
     const pX = windowWidth / 2 + this.distanceParent * cos((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution)))
     const pY = windowHeight / 2 + this.distanceParent * sin((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution)))
 
