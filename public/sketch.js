@@ -44,7 +44,7 @@ function setup() {
   ellipseMode(CENTER);
   imageMode(CENTER);
 
-  sliderTemps = createSlider(0, 1, 1, 0.02);
+  sliderTemps = createSlider(0, 10, 0, 0.02);
   sliderTemps.position(10, 10);
   sliderTemps.style('width', '80px');
 
@@ -54,12 +54,11 @@ function setup() {
 
 function draw() {
   background(20, 20, 20);
-  vitesseTemps = sliderTemps.value();
   mainStar.draw();
 }
 
 function incrementTime() {
-  temps++;
+  temps += 1 + sliderTemps.value();;
 }
 
 
@@ -83,15 +82,12 @@ function initStudiedSystem(obj) {
       })
     })
   })
-
-
 }
 
 function mouseClicked() {
   orbiter.map(function(val) {
     if (val.isOn()) {
       val.becomeCenter();
-
     }
   })
 }
@@ -100,6 +96,7 @@ function keyPressed() {
   if (keyCode === 32) {
     if (!loopState) {
       noLoop();
+      console.log("noloop");
       loopState = !loopState
     } else {
       loop();
@@ -111,9 +108,9 @@ function keyPressed() {
 function Astre(properties, systemAssocie) {
   this.diametre = properties['diametre_a_l_equateur_km'] / tailleMercure * scaleFactor;
   this.distanceParent = properties['distance_moyenne_du_soleil_ua'];
-  console.log("distance parent "+this.distanceParent);
   this.revolution = properties['periode_de_revolution_an'];
   this.nom = properties['empty'];
+
   this.child = [];
   this.photo;
   this.posX;
@@ -138,13 +135,20 @@ function Astre(properties, systemAssocie) {
     }
 
     strokeWeight(0);
+    const pX = windowWidth / 2 + (this.distanceParent * cos(temps) * (TWO_PI / (this.revolution * 365)));
+    const pY = windowHeight / 2 + (this.distanceParent * sin(temps) * (TWO_PI / (this.revolution * 365)));
 
-    const pX = windowWidth / 2 + this.distanceParent * cos((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution)))
-    const pY = windowHeight / 2 + this.distanceParent * sin((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution)))
-
-    this.posX = constrain(pX, 0, windowWidth);
-    this.posY = constrain(pY, 0, windowHeight);
+    // const pX = windowWidth / 2 + (this.distanceParent * cos((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution))))
+    // const pY = windowHeight / 2 + (this.distanceParent * sin((millis() * vitesseTemps) * (TWO_PI / (1000 * this.revolution))))
+    console.log(this.nom + "pX : " + pX);
+    console.log(this.nom + "pY : " + pY);
+    if (temps > 5)
+      noLoop();
     // ellipse(this.posX, this.posY, this.diametre, this.diametre);
+
+    // this.posX = constrain(pX, 0, windowWidth);
+    // this.posY = constrain(pY, 0, windowHeight);
+
     if (this.isOn()) {
       strokeWeight(3);
       stroke(255);
