@@ -19,7 +19,7 @@
       "thumbnail": true
     },
     "ordre": 0,
-    "periode_de_revolution_an": 0,
+    "periode_de_revolution_an": 1.0,
     "periode_de_rotation_jour_sideral": 27.28,
     "vitesse_de_liberation_km_s": "617.54",
     "type_d_astre": "Etoile",
