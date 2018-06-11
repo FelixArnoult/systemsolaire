@@ -31,8 +31,11 @@ var mainStar;
 var studiedSystem;
 
 
-var loopState = true;
+var loopState = 1;
 var temps = 0;
+
+var windowCentreX;
+var windowCentreY;
 
 
 //VARIABLES GUI
@@ -48,7 +51,7 @@ var distFactorMin = 5;
 var distFactorMax = 30;
 
 var zoomMin = 0.1;
-var zoomMax = 10;
+var zoomMax = 30;
 var zoomStep = 0.1;
 
 var vitesseTempsMin = 0;
@@ -66,6 +69,9 @@ function setup() {
   ellipseMode(CENTER);
   imageMode(CENTER);
 
+  windowCentreX = windowWidth / 2;
+  windowCentreY = windowHeight / 2;
+
   tempsComptr = setInterval(incrementTime, 100);
   // sliderRange(1, 100, 0.1);
   gui = createGui('slider-range-1');
@@ -80,7 +86,7 @@ function draw() {
 }
 
 function incrementTime() {
-  temps += vitesseTemps;
+  temps += vitesseTemps * loopState;
 }
 
 
@@ -127,15 +133,30 @@ function getSystemFromStar(star) {
 
 
 function keyPressed() {
-  if (keyCode === 32) {
-    if (!loopState) {
-      noLoop();
-      loopState = !loopState
-    } else {
-      loop();
-      loopState = !loopState
-    }
+  switch (keyCode) {
+    case 32:
+      tooglePause();
+      break;
+    case 37: //fleche gauche
+      windowCentreX--;
+      break;
+    case 38://fleche haut
+      windowCentreY++;
+      break;
+    case 39://fleche droit
+      windowCentreX++;
+      break;
+    case 40://fleche bas
+      windowCentreY--;
+      break;
   }
+}
+
+function tooglePause() {
+  if (!loopState)
+    loopState = !loopState
+  else
+    loopState = !loopState
 }
 
 function Astre(properties, systemAssocie) {
@@ -172,8 +193,8 @@ function Astre(properties, systemAssocie) {
   this.draw = function() {
 
     strokeWeight(0);
-    const pX = windowWidth / 2 + (zoom * this.distanceParent * distFactor * cos(temps * (TWO_PI / (this.revolution * 3650))));
-    const pY = windowHeight / 2 + (zoom * this.distanceParent * distFactor * sin(temps * (TWO_PI / (this.revolution * 3650))));
+    const pX = windowCentreX + (zoom * this.distanceParent * distFactor * cos(temps * (TWO_PI / (this.revolution * 3650))));
+    const pY = windowCentreY + (zoom * this.distanceParent * distFactor * sin(temps * (TWO_PI / (this.revolution * 3650))));
 
     // ellipse(this.posX, this.posY, this.diametre, this.diametre);
 
@@ -198,6 +219,8 @@ function Astre(properties, systemAssocie) {
 
 windowResized = function() {
   resizeCanvas(windowWidth, windowHeight);
+  windowCentreX = windowWidth / 2;
+  windowCentreY = windowHeight / 2;
   // background(20, 20, 20);
   draw();
 }
