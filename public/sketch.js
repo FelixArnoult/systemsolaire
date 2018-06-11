@@ -30,22 +30,22 @@ var tempsComptr;
 var mainStar;
 var studiedSystem;
 
-
 var loopState = 1;
 var temps = 0;
 
 var windowCentreX;
 var windowCentreY;
 
-
 //VARIABLES GUI
 var scaleFactor = 3;
 var distFactor = 12;
 var zoom = 1;
 var vitesseTemps = 1;
-
 var scaleFactorMin = 1;
 var scaleFactorMax = 10;
+
+var vitesseT = {};
+vitesseT['var'] = vitesseTemps;
 
 var distFactorMin = 5;
 var distFactorMax = 30;
@@ -77,10 +77,15 @@ function setup() {
   gui = createGui('slider-range-1');
   gui.addGlobals('scaleFactor', 'distFactor', 'zoom', 'vitesseTemps');
 
+  vitesseT.watch('var', function(id, oldval, newval) {
+    console.log('o.' + id + ' changed from ' + oldval + ' to ' + newval);
+    return newval;
+  });
 
 }
 
 function draw() {
+  console.log(vitesseT['var']);
   background(20, 20, 20);
   mainStar.draw();
 }
@@ -88,7 +93,6 @@ function draw() {
 function incrementTime() {
   temps += vitesseTemps * loopState;
 }
-
 
 function initStudiedSystem(obj) {
   // background(20, 20, 20);
@@ -127,10 +131,10 @@ function getSystemFromStar(star) {
   listSystem.map(function(val) {
     if (val["centre"] === star)
       return val;
-  })
+    }
+  )
   throw "Non développé !"
 }
-
 
 function keyPressed() {
   switch (keyCode) {
@@ -140,13 +144,13 @@ function keyPressed() {
     case 37: //fleche gauche
       windowCentreX--;
       break;
-    case 38://fleche haut
+    case 38: //fleche haut
       windowCentreY++;
       break;
-    case 39://fleche droit
+    case 39: //fleche droit
       windowCentreX++;
       break;
-    case 40://fleche bas
+    case 40: //fleche bas
       windowCentreY--;
       break;
   }
