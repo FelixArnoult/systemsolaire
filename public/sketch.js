@@ -1,9 +1,5 @@
 const tailleMercure = 4878;
-//
-// voyager1 = [0, 1, 12570];
-// farthestOut = voyager1[2];
-//
-//
+
 
 const solarSystem = {
   centre: "soleil",
@@ -26,6 +22,7 @@ const earthSystem = {
 
 const listSystem = [solarSystem, earthSystem];
 var tempsComptr;
+var oldTemps = 0;
 
 var mainStar;
 var studiedSystem;
@@ -38,25 +35,24 @@ var windowCentreY;
 
 //VARIABLES GUI
 var scaleFactor = 3;
-var distFactor = 12;
+var distFactor = 30;
 var zoom = 1;
 var vitesseTemps = 1;
+var displayAllStar = true;
+
 var scaleFactorMin = 1;
 var scaleFactorMax = 10;
 
-var vitesseT = {};
-vitesseT['var'] = vitesseTemps;
-
 var distFactorMin = 5;
-var distFactorMax = 30;
+var distFactorMax = 60;
 
 var zoomMin = 0.1;
 var zoomMax = 30;
 var zoomStep = 0.1;
 
 var vitesseTempsMin = 0;
-var vitesseTempsMax = 365;
-var vitesseTempsStep = 10;
+var vitesseTempsMax = 50;
+var vitesseTempsStep = 1;
 
 var gui;
 
@@ -72,26 +68,23 @@ function setup() {
   windowCentreX = windowWidth / 2;
   windowCentreY = windowHeight / 2;
 
-  tempsComptr = setInterval(incrementTime, 100);
+  // tempsComptr = setInterval(incrementTime, 100);
+  incrementTime();
   // sliderRange(1, 100, 0.1);
   gui = createGui('slider-range-1');
-  gui.addGlobals('scaleFactor', 'distFactor', 'zoom', 'vitesseTemps');
+  gui.addGlobals('scaleFactor', 'distFactor', 'zoom', 'vitesseTemps', 'displayAllStar');
 
-  vitesseT.watch('var', function(id, oldval, newval) {
-    console.log('o.' + id + ' changed from ' + oldval + ' to ' + newval);
-    return newval;
-  });
 
 }
 
 function draw() {
-  console.log(vitesseT['var']);
   background(20, 20, 20);
   mainStar.draw();
 }
 
 function incrementTime() {
-  temps += vitesseTemps * loopState;
+  temps += loopState;
+  setTimeout(incrementTime, 1000 / vitesseTemps)
 }
 
 function initStudiedSystem(obj) {
@@ -131,8 +124,7 @@ function getSystemFromStar(star) {
   listSystem.map(function(val) {
     if (val["centre"] === star)
       return val;
-    }
-  )
+  })
   throw "Non développé !"
 }
 
@@ -142,16 +134,16 @@ function keyPressed() {
       tooglePause();
       break;
     case 37: //fleche gauche
-      windowCentreX--;
+      windowCentreX-=5;
       break;
     case 38: //fleche haut
-      windowCentreY++;
+      windowCentreY+=5;
       break;
     case 39: //fleche droit
-      windowCentreX++;
+      windowCentreX+=5;
       break;
     case 40: //fleche bas
-      windowCentreY--;
+      windowCentreY-=5;
       break;
   }
 }
@@ -197,13 +189,14 @@ function Astre(properties, systemAssocie) {
   this.draw = function() {
 
     strokeWeight(0);
-    const pX = windowCentreX + (zoom * this.distanceParent * distFactor * cos(temps * (TWO_PI / (this.revolution * 3650))));
-    const pY = windowCentreY + (zoom * this.distanceParent * distFactor * sin(temps * (TWO_PI / (this.revolution * 3650))));
+    this.posX = windowCentreX + (zoom * this.distanceParent * distFactor * cos(temps * (TWO_PI / (this.revolution * 365))));
+    this.posY = windowCentreY + (zoom * this.distanceParent * distFactor * sin(temps * (TWO_PI / (this.revolution * 365))));
 
     // ellipse(this.posX, this.posY, this.diametre, this.diametre);
-
-    this.posX = constrain(pX, 0, windowWidth);
-    this.posY = constrain(pY, 0, windowHeight);
+    if (displayAllStar) {
+      this.posX = constrain(this.posX, 0, windowWidth);
+      this.posY = constrain(this.posY, 0, windowHeight);
+    }
 
     if (this.isOn()) {
       strokeWeight(3);
