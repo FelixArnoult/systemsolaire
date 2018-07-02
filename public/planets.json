@@ -29,7 +29,8 @@
     "de_la_masse_totale_du_systeme_solaire": 99.86604,
     "temperature_min": "5750",
     "empty": "SOLEIL",
-    "volume_terre_1": "1 300 000"
+    "volume_terre_1": "1 300 000",
+    "tailleConstante" : true
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -78,7 +79,8 @@
     "diametre_terre": 0.382,
     "de_la_masse_totale_du_systeme_solaire": 2e-07,
     "perihelie_ua": 0.30749951,
-    "volume_terre_1": "0.054"
+    "volume_terre_1": "0.054",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -126,7 +128,8 @@
     "diametre_terre": 1.0,
     "de_la_masse_totale_du_systeme_solaire": 3e-06,
     "perihelie_ua": 0.9832898912,
-    "volume_terre_1": "1"
+    "volume_terre_1": "1",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -174,7 +177,8 @@
     "diametre_terre": 0.532,
     "de_la_masse_totale_du_systeme_solaire": 3e-07,
     "perihelie_ua": 1.38133346,
-    "volume_terre_1": "0.149"
+    "volume_terre_1": "0.149",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -223,7 +227,8 @@
     "diametre_terre": 4.007,
     "de_la_masse_totale_du_systeme_solaire": 4.36e-05,
     "perihelie_ua": 18.37551863,
-    "volume_terre_1": "52"
+    "volume_terre_1": "52",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -272,7 +277,8 @@
     "diametre_terre": 3.8,
     "de_la_masse_totale_du_systeme_solaire": 5.14e-05,
     "perihelie_ua": 29.81079527,
-    "volume_terre_1": "44"
+    "volume_terre_1": "44",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -321,7 +327,8 @@
     "diametre_terre": 0.948,
     "de_la_masse_totale_du_systeme_solaire": 2.4e-06,
     "perihelie_ua": 0.7184327,
-    "volume_terre_1": "0.88"
+    "volume_terre_1": "0.88",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -368,7 +375,8 @@
     "diametre_terre": 11.208,
     "de_la_masse_totale_du_systeme_solaire": 0.0009532,
     "perihelie_ua": 4.95,
-    "volume_terre_1": "1316"
+    "volume_terre_1": "1316",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }, {
@@ -415,7 +423,8 @@
     "diametre_terre": 9.449,
     "de_la_masse_totale_du_systeme_solaire": 0.0002854,
     "perihelie_ua": 9.02063224,
-    "volume_terre_1": "755"
+    "volume_terre_1": "755",
+    "tailleConstante" : false
   },
   "record_timestamp": "2017-06-20T19:27:37+02:00"
 }]

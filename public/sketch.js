@@ -51,13 +51,14 @@ var zoomMax = 30;
 var zoomStep = 0.1;
 
 var vitesseTempsMin = 0;
-var vitesseTempsMax = 50;
+var vitesseTempsMax = 100;
 var vitesseTempsStep = 1;
 
 var gui;
 
 function preload() {
-  initStudiedSystem(solarSystem);
+
+  loadSoleil(solarSystem);
 }
 
 function setup() {
@@ -79,7 +80,8 @@ function setup() {
 
 function draw() {
   background(20, 20, 20);
-  mainStar.draw();
+  if (mainStar !== undefined)
+    mainStar.draw();
 }
 
 function incrementTime() {
@@ -87,22 +89,22 @@ function incrementTime() {
   setTimeout(incrementTime, 1000 / vitesseTemps)
 }
 
-function initStudiedSystem(obj) {
-  // background(20, 20, 20);
-  var request = new XMLHttpRequest();
-  request.open('GET', '/planete/' + obj["centre"], false); // `false` makes the request synchronous
-  request.send(null);
+function loadSoleil(obj) {
 
-  if (request.status === 200) {
-    let jsonarr = JSON.parse(request.responseText);
-    mainStar = new Astre(jsonarr['fields'], null);
-    mainStar.loadPhoto();
-  }
+  fetch('/planete/' + obj['centre']).then(function (response) {
+    response.json().then(function (data) {
+      mainStar = new Soleil(data['fields'])
+      mainStar.loadPhoto();
+    })
+  })
+  loadPlanets(obj);
+}
 
+function loadPlanets(obj) {
   obj['child'].map((item) => {
-    fetch('/planete/' + item).then(function(response) {
-      response.json().then(function(data) {
-        var child = new Astre(data['fields'], null)
+    fetch('/planete/' + item).then(function (response) {
+      response.json().then(function (data) {
+        var child = new Planete(data['fields'], null)
         mainStar.appendChild(child);
         child.loadPhoto();
       })
@@ -111,7 +113,7 @@ function initStudiedSystem(obj) {
 }
 
 function mouseClicked() {
-  mainStar.getChild().map(function(val) {
+  mainStar.getChild().map(function (val) {
     if (val.isOn()) {
       var nom = val.getNom();
       var system = getSystemFromStar(nom);
@@ -121,7 +123,7 @@ function mouseClicked() {
 }
 
 function getSystemFromStar(star) {
-  listSystem.map(function(val) {
+  listSystem.map(function (val) {
     if (val["centre"] === star)
       return val;
   })
@@ -134,16 +136,16 @@ function keyPressed() {
       tooglePause();
       break;
     case 37: //fleche gauche
-      windowCentreX-=5;
+      windowCentreX -= 5;
       break;
     case 38: //fleche haut
-      windowCentreY+=5;
+      windowCentreY += 5;
       break;
     case 39: //fleche droit
-      windowCentreX+=5;
+      windowCentreX += 5;
       break;
     case 40: //fleche bas
-      windowCentreY-=5;
+      windowCentreY -= 5;
       break;
   }
 }
@@ -155,39 +157,52 @@ function tooglePause() {
     loopState = !loopState
 }
 
-function Astre(properties, systemAssocie) {
-  this.diametre = properties['diametre_a_l_equateur_km'] / tailleMercure * scaleFactor;
-  this.distanceParent = properties['distance_moyenne_du_soleil_ua'];
-  this.revolution = properties['periode_de_revolution_an'];
-  this.nom = properties['empty'].toLowerCase();
+var Astre = class {
+  constructor(properties) {
+    this.diametre = properties['diametre_a_l_equateur_km'] / tailleMercure * scaleFactor;
+    this.nom = properties['empty'].toLowerCase();
 
-  this.child = [];
-  this.photo;
-  this.posX;
-  this.poxY;
+    this.photo;
+    this.posX;
+    this.poxY;
 
-  this.loadPhoto = function() {
+    this.ready = false;
+
+  }
+  loadPhoto() {
     this.photo = loadImage('images/' + this.nom.toLowerCase() + '.png');
+    this.setReady();
   }
 
-  this.appendChild = function(child) {
-    this.child.push(child);
+  setReady() {
+    this.ready = true;
   }
 
-  this.getChild = function() {
-    return this.child;
-  }
-
-  this.getNom = function() {
+  getNom() {
     return this.nom;
   }
 
-  this.isOn = function() {
+  isOn() {
     return dist(mouseX, mouseY, this.posX, this.posY) < this.diametre / 2
   }
 
-  this.draw = function() {
 
+
+}
+var Planete = class extends Astre {
+  constructor(properties, systemAssocie) {
+    super(properties, systemAssocie);
+    this.distanceParent = properties['distance_moyenne_du_soleil_ua'];
+    this.revolution = properties['periode_de_revolution_an'];
+    this.systemAssocie = systemAssocie;
+
+
+  }
+
+  draw() {
+    if (!this.ready) {
+      return 0;
+    }
     strokeWeight(0);
     this.posX = windowCentreX + (zoom * this.distanceParent * distFactor * cos(temps * (TWO_PI / (this.revolution * 365))));
     this.posY = windowCentreY + (zoom * this.distanceParent * distFactor * sin(temps * (TWO_PI / (this.revolution * 365))));
@@ -204,17 +219,38 @@ function Astre(properties, systemAssocie) {
       ellipse(this.posX, this.posY, zoom * this.diametre * scaleFactor * 0.2 + 2);
     }
     image(this.photo, this.posX, this.posY, zoom * this.diametre * scaleFactor * 0.5, zoom * this.diametre * scaleFactor * 0.5);
+  }
+
+}
+var Soleil = class extends Astre {
+  constructor(properties) {
+    super(properties);
+    this.child = [];
+  }
+  appendChild(child) {
+    this.child.push(child);
+  }
+
+  getChild() {
+    return this.child;
+  }
+
+  draw() {
+    if (!this.ready) {
+      return 0;
+    }
+    image(this.photo, windowCentreX, windowCentreY, windowWidth / 10, windowHeight / 10);
     this.drawChild();
   }
 
-  this.drawChild = function() {
-    this.child.map(function(val) {
+  drawChild() {
+    this.child.map(function (val) {
       val.draw();
     });
   }
 }
 
-windowResized = function() {
+windowResized = function () {
   resizeCanvas(windowWidth, windowHeight);
   windowCentreX = windowWidth / 2;
   windowCentreY = windowHeight / 2;
